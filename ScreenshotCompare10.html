@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>10 PTIGlobal Screenshot Comparion</title>
+  <style>
+body {}
+}
+
+/* If you want the content centered horizontally and vertically */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Style the image inside the centered container, if needed */
+.centered img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+}
+.centerbutton {
+  position: relative;
+    top: 20%;
+    left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+</style>
+</head>
+<body >
+<div class="topbar">
+<h2 align="left"> Screenshot comparisons</h2>
+<p align="left"> <span> ENU images on the left and </span><span id=TitleLang>DEU</span> images on the right</p>
+
+<p align="left">
+<select  id="languageSelector" onchange="changeLang()" name="languages">
+  <option value="DEU" selected>DEU</option>
+  <option value="CHS">CHS</option>
+  <option value="ESN">ESN</option>
+  <option value="ARA">ARA</option>
+</select>
+</p>
+<table align="center" style="width:100%">
+<tr>
+    <td align="left">
+        <button id="previousbutton" onclick="prevImg()" type="button" class="centerbutton">Previous screenshot pair</button>
+    </td>
+    <td align="left">
+        <button id="nextbutton" onclick="nextImg()" type="button" class="centerbutton">Next screenshot pair</button>
+    </td>
+</tr>
+</table>
+<p> </p>
+</div>
+
+<table style="width:100%">
+  <tr>
+    <th><h2>ENU image <span id="imgNr">01</span></h2></th>
+    <th><h2><span id="testLang">DEU</span> image <span id="imgNrLang">01</span><h2></th> 
+  </tr>
+  <tr>
+    <td>
+	<!--div class="split left"-->
+		<div class="centered">
+			<img id="ENUimg" src="ENU01.png" >
+			<h2 align="center">ENU</h2>
+			<p align="center">compare</p>
+		</div>
+	<!--/div-->
+	</td>
+    <td>
+	<!--div class="split right"-->
+		<div class="centered">
+			<img id="TESTEDimg" src="DEU01.png" >
+			<h2 id="TestedLangBelow" align="center">DEU</h2>
+			<p align="center">mark bugs</p>
+		</div>
+	<!--/div-->
+	</td> 
+  </tr>
+</table>
+
+<!-- <iframe src="ENU.html" height="600" width="700"></iframe> -->
+<!-- <iframe src="DEU.html" height="600" width="700"></iframe> -->
+
+<canvas id="draw" width="800" height="500" ></canvas>
+
+<script type="text/javascript">
+
+var selectedLanguage = document.getElementById("languageSelector").options[document.getElementById("languageSelector").selectedIndex].text;
+console.log({selectedLanguage});
+
+function nextImg(){
+	var currentImgNrStr = document.getElementById("ENUimg").src.slice(-6, -4);
+	console.log({currentImgNrStr});
+	var currentImgNr = parseInt(currentImgNrStr);
+	console.log({currentImgNr});
+	var i = currentImgNr + 1;
+	console.log({i});
+    var j=pad(i);
+    var istring = j.toString();
+    console.log({istring});
+    document.getElementById("imgNr").innerHTML =  istring ;
+    document.getElementById("imgNrLang").innerHTML =  istring ;
+    document.getElementById("ENUimg").src = "ENU" + istring + ".png";
+	document.getElementById("TESTEDimg").src = selectedLanguage + istring + ".png";
+    try
+    {
+    /*var myObject, myFile;
+    myObject = new ActiveXObject("Scripting.FileSystemObject");
+    myFile = myObject.GetFile("ENU" + i + ".png");*/
+    }
+    catch(err)
+    {
+    alert("file does not exist")
+    }
+	
+}
+
+function pad(d) {
+    return (d < 10) ? '0' + d.toString() : d.toString();
+}
+
+function prevImg(){
+	var currentImgNrStr = document.getElementById("ENUimg").src.slice(-6, -4);
+	console.log({currentImgNrStr});
+	var currentImgNr = parseInt(currentImgNrStr);
+	console.log({currentImgNr});
+	var i = currentImgNr - 1;
+	console.log({i});
+    var j=pad(i);
+    var istring = j.toString();
+    console.log({istring});
+    document.getElementById("imgNr").innerHTML =  istring ;
+    document.getElementById("imgNrLang").innerHTML =  istring ;
+    document.getElementById("ENUimg").src = "ENU" + istring + ".png";
+	document.getElementById("TESTEDimg").src = selectedLanguage + istring + ".png";
+    try
+    {
+    /*var myObject, myFile;
+    myObject = new ActiveXObject("Scripting.FileSystemObject");
+    myFile = myObject.GetFile("ENU" + i + ".png");*/
+    }
+    catch(err)
+    {
+    alert("file does not exist")
+    }
+}
+
+function changeLang(){
+
+    selectedLanguage = document.getElementById("languageSelector").options[document.getElementById("languageSelector").selectedIndex].text;
+    console.log({selectedLanguage});
+	var myImgNrStr = document.getElementById("ENUimg").src.slice(-6, -4);
+	console.log({myImgNrStr});
+	
+	document.getElementById("testLang").innerHTML= selectedLanguage;
+	document.getElementById("TestedLangBelow").innerHTML=selectedLanguage;
+	document.getElementById("TitleLang").innerHTML=selectedLanguage;
+	document.getElementById("TESTEDimg").src = selectedLanguage + myImgNrStr +".png";
+}
+
+
+const canvas = document.querySelector('#draw');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+ctx.strokeStyle = '#BADA55'; //color
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 10;
+// ctx.globalCompositeOperation = 'multiply';
+
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+
+function draw(e) {
+  if (!isDrawing) return; // stop the fn from running when they are not moused down
+  console.log(e);
+  ctx.beginPath();
+  // start from
+  ctx.moveTo(lastX, lastY);
+  // go to
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+  [lastX, lastY] = [e.offsetX, e.offsetY]; //update XY were you lifted the mouse up
+
+}
+
+canvas.addEventListener('mousedown', (e) => {
+  isDrawing = true;
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+});
+
+
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', () => isDrawing = false);
+canvas.addEventListener('mouseout', () => isDrawing = false);
+
+
+</script>
+</body>
+</html>
